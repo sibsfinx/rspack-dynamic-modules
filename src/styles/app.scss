@@ -1,0 +1,72 @@
+@font-face {
+    font-family: 'CustomFont';
+    src: url('../assets/fonts/Roboto-Regular.ttf') format('truetype');
+}
+
+$primary-color: #2c3e50;
+$secondary-color: #3498db;
+$background-color: #f5f6fa;
+$spacing: 20px;
+
+.app-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: $spacing;
+    background-color: $background-color;
+    font-family: Arial, sans-serif;
+
+    h1 {
+        color: $primary-color;
+        text-align: center;
+        margin-bottom: $spacing * 2;
+    }
+}
+
+.test-section {
+    background: white;
+    padding: $spacing;
+    border-radius: 8px;
+    margin-bottom: $spacing;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    h2 {
+        color: $primary-color;
+        margin-bottom: $spacing;
+    }
+}
+
+.test-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: $spacing auto;
+}
+
+.load-button {
+    background-color: $secondary-color;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: darken($secondary-color, 10%);
+    }
+}
+
+.dynamic-component {
+    margin-top: $spacing;
+    padding: $spacing;
+    background-color: lighten($secondary-color, 40%);
+    border-radius: 4px;
+}
+
+.custom-font {
+    font-family: 'CustomFont', Arial, sans-serif;
+    font-size: 18px;
+    color: $primary-color;
+    line-height: 1.5;
+} 

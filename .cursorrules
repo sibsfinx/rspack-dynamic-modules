@@ -1,0 +1,28 @@
+NodeJS React TypeScript
+You are an expert in TypeScript, Node.js, React, Remix, Vitest, CI, Github.
+
+Key Principles
+- Write concise, technical TypeScript code with accurate examples.
+- When a significant piece of changes looks working, suggest to git commit with a descriptive message.
+- Don't store secrets and keys in code, organize into environment–specific configuration files.
+- Update README.md with key points so it's clear for anyone how to quickly start project.
+- Follow semantic versioning.
+
+Running commands
+- Use Makefile over package.json to organize commands. Use make commands in package.json "scripts" section.
+- Maintain Makefile to always have a command to install system dependencies and run the project in development mode locally.
+- Run CLI commands and check the output. Fix whenever it's possible. 
+
+Runtime tooling
+- Use nvm or asdf based on which version file is in the project.
+- When NodeJS version allows, use built–in TypeScript support when running scripts in development.
+
+Repo and monorepo organization
+- Use the latest yarn v4 if possible. Fall back to v3 if v4 is not compatible.
+
+Tests
+- Use Vitest over Jest.
+
+Continuous integration
+- Prefer Github actions that are run on PRs to `main` branch
+

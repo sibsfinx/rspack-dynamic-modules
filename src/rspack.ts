@@ -1,5 +1,6 @@
 import { Configuration } from '@rspack/core';
 import autoprefixer from 'autoprefixer';
+import path from 'path';
 
 // Add configuration parameters
 interface RspackConfigParams {
@@ -23,16 +24,28 @@ export function createRspackConfig({
 	plugins,
 	sourceMaps = true,
 }: RspackConfigParams): Configuration {
+	const isDev = mode === 'development';
+
 	return {
 		mode,
 		entry,
-		devtool: mode === 'development' ? 'eval-source-map' : 'source-map',
+		devtool: isDev ? 'eval-source-map' : 'source-map',
+		// Enable caching
+		// cache: {
+		//     type: 'filesystem',
+		//     buildDependencies: {
+		//         config: [__filename],
+		//     },
+		//     name: isDev ? 'dev-cache' : 'prod-cache',
+		// },
 		output: {
 			publicPath,
 			path: distPath,
-			filename: '[name].js',
+			filename: isDev ? '[name].js' : '[name].[contenthash].js',
 			library: 'App',
 			libraryTarget: 'var',
+			// Clean output directory between builds
+			clean: true,
 		},
 		module: {
 			rules: [
@@ -49,6 +62,10 @@ export function createRspackConfig({
 								happyPackMode: true,
 								onlyCompileBundledFiles: true,
 								experimentalWatchApi: true,
+								compilerOptions: {
+									module: 'esnext',
+									target: 'es2015'
+								}
 							},
 						},
 					],
@@ -155,14 +172,58 @@ export function createRspackConfig({
 			],
 		},
 		optimization: {
-			moduleIds: 'named',
-			chunkIds: 'named',
-			minimize: mode === 'production',
+			moduleIds: isDev ? 'named' : 'deterministic',
+			chunkIds: isDev ? 'named' : 'deterministic',
+			minimize: !isDev,
 			sideEffects: true,
+			usedExports: true,
+			innerGraph: true,
+			splitChunks: {
+				chunks: 'all',
+				minSize: 20000,
+				minChunks: 1,
+				cacheGroups: {
+					vendor: {
+						test: /[\\/]node_modules[\\/]/,
+						name: 'vendors',
+						chunks: 'all',
+					},
+					common: {
+						name: 'common',
+						minChunks: 2,
+						chunks: 'all',
+						priority: -20,
+					},
+				},
+			},
+			// Optimize module concatenation
+			concatenateModules: true,
+			// Extract runtime code into a separate chunk
+			runtimeChunk: {
+				name: 'runtime',
+			},
 		},
 		resolve: {
 			extensions: ['.ts', '.tsx', '.js'],
+			// Add module aliases
+			alias: {
+				'@utils': path.resolve(context, 'src/utils'),
+				'@components': path.resolve(context, 'src/components'),
+			},
+			// Restrict module search paths
+			modules: ['node_modules'],
+			// Prefer module field in package.json
+			mainFields: ['module', 'main'],
 		},
 		plugins,
+		// Development server options
+		devServer: isDev ? {
+			hot: true,
+			compress: true,
+			historyApiFallback: true,
+			client: {
+				overlay: true,
+			},
+		} : undefined,
 	};
 }

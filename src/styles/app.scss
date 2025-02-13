@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 @font-face {
     font-family: 'CustomFont';
     src: url('../assets/fonts/Roboto-Regular.ttf') format('truetype');
@@ -53,14 +55,14 @@ $spacing: 20px;
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: darken($secondary-color, 10%);
+        background-color: color.adjust($secondary-color, $lightness: -10%);
     }
 }
 
 .dynamic-component {
     margin-top: $spacing;
     padding: $spacing;
-    background-color: lighten($secondary-color, 40%);
+    background-color: color.adjust($secondary-color, $lightness: 40%);
     border-radius: 4px;
 }
 

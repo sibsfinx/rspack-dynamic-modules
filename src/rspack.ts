@@ -28,7 +28,10 @@ export function createRspackConfig({
 
 	return {
 		mode,
-		entry,
+		entry: {
+			scripts: './src/index.tsx',  // Main React entry point
+			styles: './src/styles/app.scss'  // SCSS entry point
+		},
 		devtool: isDev ? 'eval-source-map' : 'source-map',
 		// Enable caching
 		// cache: {
@@ -50,68 +53,30 @@ export function createRspackConfig({
 		module: {
 			rules: [
 				{
-					test: /.ts?$/,
-					use: [
-						{
-							loader: 'ts-loader',
-							options: {
-								context: tscontext,
-								transpileOnly: true,
-								projectReferences: true,
-								reportFiles: ['*.ts'],
-								happyPackMode: true,
-								onlyCompileBundledFiles: true,
-								experimentalWatchApi: true,
-								compilerOptions: {
-									module: 'esnext',
-									target: 'es2015'
-								}
-							},
-						},
-					],
-				},
-				{
-					test: /\.tsx$/,
+					test: /\.(ts|tsx)$/,
+					exclude: /node_modules/,
 					use: [
 						{
 							loader: 'babel-loader',
 							options: {
 								cacheDirectory: true,
+								presets: [
+									'@babel/preset-env',
+									'@babel/preset-react',
+									'@babel/preset-typescript'
+								],
 								plugins: [
 									'@babel/plugin-syntax-jsx',
-									[
-										'@babel/plugin-transform-react-jsx',
-									],
-									[
-										'babel-plugin-styled-components',
-										{
-											displayName: true,
-											fileName: true,
-											meaninglessFileNames: [
-												'index',
-												'styles',
-												'styledComponents',
-											],
-										},
-									],
+									'@babel/plugin-transform-react-jsx',
+									'babel-plugin-styled-components'
 								],
-							},
-						},
-						{
-							loader: 'ts-loader',
-							options: {
-								transpileOnly: true,
 							},
 						},
 					],
 				},
 				{
-					test: /\.ts$/,
-					use: ['source-map-loader'],
-					enforce: 'pre',
-				},
-				{
 					test: /\.js$/,
+					exclude: /node_modules/,
 					use: [
 						{
 							loader: 'babel-loader',
@@ -137,34 +102,25 @@ export function createRspackConfig({
 				},
 				{
 					test: /\.scss$/,
+					type: 'css',
 					use: [
-						{
-							loader: 'file-loader',
-							options: {
-								name: 'styles/[name].css',
-							},
-						},
-						{
-							loader: 'extract-loader',
-						},
-						{
-							loader: 'css-loader?-url',
-							options: {
-								url: false,
-								sourceMap: true,
-							},
-						},
 						{
 							loader: 'postcss-loader',
 							options: {
-								sourceMap: true,
-								plugins: () => [autoprefixer()],
+								postcssOptions: {
+									plugins: [autoprefixer()],
+								},
 							},
 						},
 						{
 							loader: 'sass-loader',
 							options: {
 								sourceMap: true,
+								api: 'modern',
+								implementation: require.resolve('sass'),
+								sassOptions: {
+									outputStyle: isDev ? 'expanded' : 'compressed',
+								},
 							},
 						},
 					],
@@ -204,7 +160,7 @@ export function createRspackConfig({
 			},
 		},
 		resolve: {
-			extensions: ['.ts', '.tsx', '.js'],
+			extensions: ['.ts', '.tsx', '.js', '.scss'],
 			// Add module aliases
 			alias: {
 				'@utils': path.resolve(context, 'src/utils'),
